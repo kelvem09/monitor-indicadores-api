@@ -23,7 +23,7 @@ export class Relatorio {
   @Column({ type: 'int' })
   ano: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'float' })
   valorIndicador: number;
 
   @Column({ length: 80 })

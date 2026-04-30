@@ -1,98 +1,197 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Monitor de Indicadores API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API desenvolvida em NestJS para gerenciar usuários, municípios e relatórios de indicadores municipais.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+O sistema utiliza autenticação JWT, controle de acesso por perfis e banco de dados SQLite com TypeORM.
 
-## Description
+## Justificativa do domínio
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+O domínio escolhido foi o de monitoramento de indicadores municipais, pois representa um cenário comum em sistemas públicos, com usuários de diferentes níveis de acesso e relatórios vinculados a municípios.
 
-## Project setup
+A aplicação permite que administradores criem usuários e relatórios, enquanto outros perfis possuem permissões mais restritas de consulta e atualização.
+
+## Tecnologias utilizadas
+
+- NestJS
+- TypeScript
+- SQLite
+- TypeORM
+- JWT
+- Passport
+- bcrypt
+- class-validator
+- Swagger
+
+## Instalação
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+## Configuração
+
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+
+```env
+PORT=3000
+DATABASE_PATH=database.sqlite
+JWT_SECRET=segredo_da_atividade
+JWT_EXPIRES_IN=1d
+```
+
+## Execução
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Run tests
+A documentação Swagger fica disponível em:
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```txt
+http://localhost:3000/api/docs
 ```
 
-## Deployment
+## Usuário inicial
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Ao iniciar a aplicação, é criado automaticamente um usuário master:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```json
+{
+  "email": "master@sistema.com",
+  "senha": "master123"
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Perfis de acesso
 
-## Resources
+O sistema possui três perfis:
 
-Check out a few resources that may come in handy when working with NestJS:
+- `ROLE_MASTER`
+- `ROLE_ADMIN_PUBLICO`
+- `ROLE_AUDITOR`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Matriz de permissões
 
-## Support
+| Rota | Método | Acesso |
+|---|---|---|
+| `/help` | GET | Público |
+| `/auth/login` | POST | Público |
+| `/usuarios` | GET | ROLE_MASTER |
+| `/usuarios` | POST | ROLE_MASTER |
+| `/usuarios/:id` | DELETE | ROLE_MASTER |
+| `/municipios` | GET | ROLE_MASTER, ROLE_ADMIN_PUBLICO, ROLE_AUDITOR |
+| `/relatorios` | POST | ROLE_MASTER |
+| `/relatorios/municipio/:municipioId` | GET | ROLE_MASTER, ROLE_ADMIN_PUBLICO |
+| `/relatorios/:id` | PATCH | ROLE_MASTER, ROLE_ADMIN_PUBLICO |
+| `/relatorios/:id` | DELETE | ROLE_MASTER |
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Exemplos de uso
 
-## Stay in touch
+### Login
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Requisição:
 
-## License
+```json
+{
+  "email": "master@sistema.com",
+  "senha": "master123"
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Resposta:
+
+```json
+{
+  "accessToken": "token_jwt",
+  "user": {
+    "id": 1,
+    "nome": "Master",
+    "email": "master@sistema.com",
+    "role": "ROLE_MASTER"
+  }
+}
+```
+
+### Criar usuário
+
+Requisição:
+
+```json
+{
+  "nome": "Administrador Público de Natal",
+  "email": "admin.natal@sistema.com",
+  "senha": "admin123",
+  "role": "ROLE_ADMIN_PUBLICO",
+  "municipioId": 1
+}
+```
+
+Resposta:
+
+```json
+{
+  "id": 2,
+  "nome": "Administrador Público de Natal",
+  "email": "admin.natal@sistema.com",
+  "role": "ROLE_ADMIN_PUBLICO",
+  "municipio": {
+    "id": 1,
+    "nome": "Natal",
+    "uf": "RN"
+  }
+}
+```
+
+A senha é enviada na requisição, mas não é retornada na resposta.
+
+### Criar relatório
+
+Requisição:
+
+```json
+{
+  "titulo": "Relatório de Mortalidade Infantil",
+  "descricao": "Indicador municipal de mortalidade infantil para acompanhamento anual.",
+  "ano": 2024,
+  "nomeIndicador": "Taxa de mortalidade infantil",
+  "valorIndicador": 12.5,
+  "municipioId": 1
+}
+```
+
+Resposta:
+
+```json
+{
+  "id": 1,
+  "titulo": "Relatório de Mortalidade Infantil",
+  "descricao": "Indicador municipal de mortalidade infantil para acompanhamento anual.",
+  "ano": 2024,
+  "nomeIndicador": "Taxa de mortalidade infantil",
+  "valorIndicador": 12.5,
+  "municipio": {
+    "id": 1,
+    "nome": "Natal",
+    "uf": "RN"
+  },
+  "createdAt": "2026-04-30T00:00:00.000Z",
+  "updatedAt": "2026-04-30T00:00:00.000Z"
+}
+```
+
+## Status HTTP utilizados
+
+- `200 OK` para consultas bem-sucedidas.
+- `201 Created` para criações.
+- `204 No Content` para exclusões.
+- `401 Unauthorized` para login inválido ou ausência de token.
+- `403 Forbidden` para acesso sem permissão.
+- `404 Not Found` para recurso inexistente.
+
+## Collection
+
+A collection do Postman ou Insomnia está incluída no projeto para teste das rotas principais.
+
+## Observação
+
+O banco SQLite é criado automaticamente ao executar a aplicação.

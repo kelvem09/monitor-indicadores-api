@@ -1,17 +1,34 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from '../common/enums/role.enum';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
+
+  async onApplicationBootstrap() {
+    const existing = await this.usersRepository.findOne({
+      where: { email: 'master@sistema.com' },
+    });
+    if (!existing) {
+      const senhaHash = await bcrypt.hash('master123', 10);
+      const master = this.usersRepository.create({
+        nome: 'Master',
+        email: 'master@sistema.com',
+        senha: senhaHash,
+        role: Role.MASTER,
+      });
+      await this.usersRepository.save(master);
+    }
+  }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
